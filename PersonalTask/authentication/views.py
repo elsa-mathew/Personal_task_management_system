@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from task.models import Task
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
 
 def home(request):
@@ -87,16 +89,11 @@ from task.models import Task
 def dashboard(request):
 
     tasks = Task.objects.filter(user=request.user)
-
-    # ---------------- Search ---------------- #
-
     search = request.GET.get("search")
 
     if search:
 
         tasks = tasks.filter(title__icontains=search)
-
-    # ---------------- Status ---------------- #
 
     status = request.GET.get("status")
 
@@ -104,15 +101,11 @@ def dashboard(request):
 
         tasks = tasks.filter(status=status)
 
-    # ---------------- Priority ---------------- #
-
     priority = request.GET.get("priority")
 
     if priority:
 
         tasks = tasks.filter(priority__iexact=priority)
-
-    # ---------------- Sorting ---------------- #
 
     sort = request.GET.get("sort")
 
@@ -145,8 +138,6 @@ def dashboard(request):
 
         tasks = tasks.order_by("-created_at")
 
-    # ---------------- Status-wise Tasks ---------------- #
-
     completed_tasks = [
         task for task in tasks
         if task.status == "Completed"
@@ -161,8 +152,6 @@ def dashboard(request):
         task for task in tasks
         if task.status == "Pending"
     ]
-
-    # ---------------- Dashboard Counts ---------------- #
 
     total_tasks = Task.objects.filter(
         user=request.user
@@ -213,9 +202,7 @@ def dashboard(request):
     }
 
     return render(request, "dashboard.html", context)
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.shortcuts import render, redirect
+
 
 @login_required
 def profile(request):
@@ -236,9 +223,7 @@ def profile(request):
 
     return render(request, "profile.html")
 
-from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.hashers import check_password
-from django.contrib import messages
+
 
 @login_required
 def change_password(request):

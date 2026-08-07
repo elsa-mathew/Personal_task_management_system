@@ -3,14 +3,9 @@ import datetime
 from .models import Task
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.core.paginator import Paginator
+from django.shortcuts import render, get_object_or_404
 
-
-def task_list(request):
-   
-    tasks = []  
-
-
-    return render(request, 'task_list.html', {'tasks': tasks})
 
 def task_detail(request, task_id):
     
@@ -48,12 +43,7 @@ def create_task(request):
 
     return render(request, 'task_create.html')
 
-from django.core.paginator import Paginator
-from .models import Task
 
-from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator
-from .models import Task
 
 
 @login_required
@@ -63,28 +53,20 @@ def my_tasks(request):
     user=request.user
 ).order_by("-created_at")
 
-    # ---------------- Search ----------------
-
     search = request.GET.get("search")
 
     if search:
         tasks = tasks.filter(title__icontains=search)
-
-    # ---------------- Status Filter ----------------
 
     status = request.GET.get("status")
 
     if status:
         tasks = tasks.filter(status=status)
 
-    # ---------------- Priority Filter ----------------
-
     priority = request.GET.get("priority")
 
     if priority:
         tasks = tasks.filter(priority__iexact=priority)
-
-    # ---------------- Sorting ----------------
 
     sort = request.GET.get("sort")
 
@@ -112,8 +94,6 @@ def my_tasks(request):
 
     else:
         tasks = tasks.order_by("-created_at")
-
-    # ---------------- Pagination ----------------
 
     paginator = Paginator(tasks, 10)
 
@@ -183,22 +163,7 @@ def task_sort(request):
 
     return render(request, 'task_sort.html', {'tasks': tasks, 'sort_criteria': sort_criteria})
 
-def task_export(request):
-    # This view will handle exporting tasks to a file (e.g., CSV, Excel)
-    tasks = []  # Replace with actual task retrieval logic
-    # Implement export logic here (e.g., generate CSV or Excel file)
-    return render(request, 'task_export.html', {'tasks': tasks})
 
-def task_import(request):
-    # This view will handle importing tasks from a file (e.g., CSV, Excel)
-    if request.method == 'POST':
-        # Handle file upload and import tasks
-        pass  # Replace with actual task import logic
-    return render(request, 'task_import.html')
-
-from django.shortcuts import render
-
-from django.shortcuts import render, get_object_or_404
 
 @login_required
 def view_task(request, id):
@@ -219,8 +184,6 @@ def view_task(request, id):
 
     return render(request, 'view_task.html', context)
 
-from django.shortcuts import get_object_or_404, redirect
-from django.contrib import messages
 
 @login_required
 def update_task(request, id):
@@ -252,8 +215,6 @@ def update_task(request, id):
 
         return redirect("my_tasks")
 
-from django.shortcuts import get_object_or_404, redirect
-from django.contrib import messages
 
 @login_required
 def delete_task(request, id):
