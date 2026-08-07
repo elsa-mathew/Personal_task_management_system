@@ -1,0 +1,480 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Tasks | TaskFlow</title>
+
+    <link rel="stylesheet" href="{% static 'css/my_task.css' %}">
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+<body>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="message-box {{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="navbar">
+        <div class="logo">TaskFlow</div>
+        
+    </div>
+
+    <div class="menu-container">
+
+        <div class="menu-items">
+            <i class="fa-solid fa-house"></i>
+            <a href="{% url 'dashboard' %}">Dashboard</a>
+        </div>
+        <div class="menu-items">
+            <i class="fa-solid fa-pen-to-square"></i>
+            <a href="{% url 'create_task' %}">Create</a>
+        </div>
+        <div class="menu-items">
+            <i class="fa-solid fa-list-check"></i>
+            <a href="{% url 'my_tasks' %}">MyTasks</a>
+        </div>
+        <div class="menu-items">
+            <i class="fa-regular fa-circle-user"></i>
+            <a href="{% url 'profile' %}">Profile</a>
+        </div>
+        <div class="menu-items">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <a href="{% url 'logout' %}">Logout</a>
+        </div>
+            
+      
+    </div>
+    <!-- Main Content -->
+
+    <div class="task-container">
+
+        <div class="page-header">
+
+            <h2>My Tasks</h2>
+        <a href="{% url 'create_task' %}" class="add-btn">
+    <i class="fa-solid fa-plus"></i>
+    Create Task
+</a>
+
+
+        </div>
+
+<form id="filterForm" method="GET" class="status-sort">
+
+    <input
+        type="text"
+        id="searchInput"
+        name="search"
+        class="dashboard-search"
+        placeholder="Search Task..."
+        value="{{ request.GET.search }}">
+
+    
+</form>
+
+<!-- ================= Task Table ================= -->
+
+<table class="task-table">
+
+    <thead>
+
+        <tr>
+
+            <th>#</th>
+
+            <th>Task Title</th>
+
+            <th>Description</th>
+
+            <th>Priority</th>
+
+            <th>Status</th>
+
+            <th>Due Date</th>
+
+            <th>Actions</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        {% for task in page_obj %}
+
+        <tr>
+
+            <td>{{ forloop.counter }}</td>
+
+            <td>{{ task.title }}</td>
+
+            <td>{{ task.description|truncatechars:50 }}</td>
+
+            <td>
+
+                {% if task.priority == "high" %}
+
+                    <span class="task-title-4">
+                        High
+                    </span>
+
+                {% elif task.priority == "medium" %}
+
+                    <span class="task-title-2">
+                        Medium
+                    </span>
+
+                {% else %}
+
+                    <span class="task-title-1">
+                        Low
+                    </span>
+
+                {% endif %}
+
+            </td>
+
+            <td>{{ task.status }}</td>
+
+            <td>{{ task.due_date|date:"d M Y" }}</td>
+
+            <td class="action-buttons">
+
+                <a href="{% url 'view_task' task.id %}" class="view-btn">
+
+                    <i class="fa-solid fa-eye"></i>
+
+                    View
+
+                </a>
+
+                <button
+                    type="button"
+                    class="edit-btn"
+
+                    data-id="{{ task.id }}"
+                    data-title="{{ task.title }}"
+                    data-description="{{ task.description }}"
+                    data-priority="{{ task.priority }}"
+                    data-status="{{ task.status }}"
+                    data-due-date="{{ task.due_date|date:'Y-m-d' }}">
+
+                    <i class="fa-solid fa-pen"></i>
+
+                    Edit
+
+                </button>
+
+                <button
+                    type="button"
+                    class="delete-btn"
+
+                    data-id="{{ task.id }}"
+                    data-title="{{ task.title }}">
+
+                    <i class="fa-solid fa-trash"></i>
+
+                    Delete
+
+                </button>
+
+            </td>
+
+        </tr>
+
+        {% empty %}
+
+        <tr>
+
+            <td colspan="7" style="text-align:center;padding:20px;">
+
+                No Tasks Found
+
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+<!-- ================= Pagination ================= -->
+
+<div class="pagination">
+
+    {% if page_obj.has_previous %}
+
+        <a href="?page=1">First</a>
+
+        <a href="?page={{ page_obj.previous_page_number }}">
+
+            Previous
+
+        </a>
+
+    {% endif %}
+
+    <span>
+
+        Page {{ page_obj.number }}
+
+        of
+
+        {{ page_obj.paginator.num_pages }}
+
+    </span>
+
+    {% if page_obj.has_next %}
+
+        <a href="?page={{ page_obj.next_page_number }}">
+
+            Next
+
+        </a>
+
+        <a href="?page={{ page_obj.paginator.num_pages }}">
+
+            Last
+
+        </a>
+
+    {% endif %}
+
+</div>
+
+<!-- ================= Edit Task Modal ================= -->
+
+<div id="editModal" class="modal">
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <h2>Edit Task</h2>
+
+            <span class="close-btn">&times;</span>
+
+        </div>
+
+        <form id="editForm"
+              method="POST"
+              enctype="multipart/form-data">
+
+            {% csrf_token %}
+
+            <input
+                type="hidden"
+                id="taskId"
+                name="task_id">
+
+            <!-- Task Title -->
+
+            <div class="form-group">
+
+                <label>Task Title</label>
+
+                <input
+                    type="text"
+                    id="editTitle"
+                    name="title"
+                    required>
+
+            </div>
+
+            <!-- Description -->
+
+            <div class="form-group">
+
+                <label>Description</label>
+
+                <textarea
+                    id="editDescription"
+                    name="description"
+                    rows="5"
+                    required></textarea>
+
+            </div>
+
+            <!-- Priority -->
+
+            <div class="form-group">
+
+                <label>Priority</label>
+
+                <div class="priority-group">
+
+                    <label>
+
+                        <input
+                            type="radio"
+                            id="priorityHigh"
+                            name="priority"
+                            value="high">
+
+                        High
+
+                    </label>
+
+                    <label>
+
+                        <input
+                            type="radio"
+                            id="priorityMedium"
+                            name="priority"
+                            value="medium">
+
+                        Medium
+
+                    </label>
+
+                    <label>
+
+                        <input
+                            type="radio"
+                            id="priorityLow"
+                            name="priority"
+                            value="low">
+
+                        Low
+
+                    </label>
+
+                </div>
+
+            </div>
+
+            <!-- Status -->
+
+            <div class="form-group">
+
+                <label>Status</label>
+
+                <select
+                    id="editStatus"
+                    name="status">
+
+                    <option value="Pending">Pending</option>
+
+                    <option value="In Progress">In Progress</option>
+
+                    <option value="Completed">Completed</option>
+
+                    <option value="Cancelled">Cancelled</option>
+
+                    <option value="On Hold">On Hold</option>
+
+                    <option value="Not Started">Not Started</option>
+
+                    <option value="In Review">In Review</option>
+
+                    <option value="Needs Clarification">Needs Clarification</option>
+
+                    <option value="Testing in Progress">Testing in Progress</option>
+
+                </select>
+
+            </div>
+
+            <!-- Due Date -->
+
+            <div class="form-group">
+
+                <label>Due Date</label>
+
+                <input
+                    type="date"
+                    id="editDueDate"
+                    name="due_date"
+                    required>
+
+            </div>
+
+            <!-- Attachment -->
+
+            <div class="form-group">
+
+                <label>Attachment</label>
+
+                <input
+                    type="file"
+                    id="editFile"
+                    name="file">
+
+            </div>
+
+            <div class="modal-buttons">
+
+                <button
+                    type="submit"
+                    class="update-btn">
+
+                    <i class="fa-solid fa-floppy-disk"></i>
+
+                    Update Task
+
+                </button>
+
+         
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+<div id="deleteModal" class="modal">
+
+    <div class="modal-content delete-content">
+
+        <h3>Delete Task</h3>
+
+        <p>
+
+            Are you sure you want to delete
+
+            <strong id="deleteTaskTitle"></strong> ?
+
+        </p>
+
+        <form id="deleteForm" method="POST">
+
+            {% csrf_token %}
+
+            <div class="modal-buttons">
+
+                <button
+                    type="submit"
+                    class="delete-btn">
+
+                    Yes, Delete
+
+                </button>
+
+                <button
+                    type="button"
+                    id="cancelDelete"
+                    class="cancel-btn">
+
+                    Cancel
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+    </div>      
+<script src="{% static 'js/my_task.js' %}"></script>
+</body>
+</html>

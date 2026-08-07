@@ -1,0 +1,159 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Task</title>
+
+    <link rel="stylesheet" href="{% static 'css/task_create.css' %}">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+<body>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="message-box {{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="navbar">
+        <div class="logo">TaskFlow</div>
+        
+    </div>
+
+    <div class="menu-container">
+
+        <div class="menu-items">
+            <i class="fa-solid fa-house"></i>
+            <a href="{% url 'dashboard' %}">Dashboard</a>
+        </div>
+        <div class="menu-items">
+            <i class="fa-solid fa-pen-to-square"></i>
+            <a href="{% url 'create_task' %}">Create</a>
+        </div>
+        <div class="menu-items">
+            <i class="fa-solid fa-list-check"></i>
+            <a href="{% url 'my_tasks' %}">MyTasks</a>
+        </div>
+        <div class="menu-items">
+            <i class="fa-regular fa-circle-user"></i>
+            <a href="{% url 'profile' %}">Profile</a>
+        </div>
+        <div class="menu-items">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <a href="{% url 'logout' %}">Logout</a>
+        </div>
+            
+      
+    </div>
+
+    <div class="create-task-container">
+
+        <h2>Create New Task</h2>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label>Task Title</label>
+                <input type="text" name="title" placeholder="Enter task title">
+            </div>
+
+            <div class="form-group">
+                <label>Description</label>
+                <textarea name="description" rows="5" placeholder="Enter task description"></textarea>
+            </div>
+
+            <div class="form-group">
+
+                <label>Priority</label>
+                <div class="priority-options">
+
+                    <label>
+                        <input type="radio" name="priority" value="High">High
+                    </label>
+
+                    <label>
+                        <input type="radio"
+                               name="priority" value="Medium" checked>
+                        Medium
+                    </label>
+
+                    <label>
+                        <input type="radio"
+                               name="priority" value="Low">
+                        Low
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Status</label>
+
+                <select name="status">
+
+                    <option>Pending</option>
+
+                    <option>Completed</option>
+
+                    <option>Overdue</option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label>Due Date</label>
+
+                    <input type="date" name="due_date" required>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Due Time</label>
+
+                    <input type="time" name="due_time">
+
+                </div>
+
+            </div>
+
+            <div class="form-group">
+
+    <label>Attachment</label>
+
+    <input type="file" name="file">
+
+</div>
+
+            <!-- Buttons -->
+
+            <div class="button-group">
+
+                <button type="submit"
+                        class="save-btn">
+                    Create Task
+                </button>
+
+
+            </div>
+
+        </form>
+
+    </div>
+
+</body>
+</html>
