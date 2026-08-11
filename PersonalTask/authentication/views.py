@@ -1,3 +1,5 @@
+import random
+
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from task.models import Task
@@ -273,3 +275,145 @@ def logout_view(request):
         return redirect("login")
 
     return render(request, "login.html")
+
+
+
+def forgot_password(request):
+
+    if request.method == "POST":
+
+        email = request.POST.get("email")
+
+        try:
+            user = User.objects.get(email=email)
+
+        except User.DoesNotExist:
+
+            messages.error(
+                request,
+                "No account found with this email address."
+            )
+
+            return render(
+                request,
+                "forgot_password.html"
+            )
+
+        # Generate 6 digit OTP
+        otp = random.randint(100000, 999999)
+
+       
+        request.session["reset_user_id"] = user.id
+        request.session["reset_otp"] = str(otp)
+
+        
+        print("================================")
+        print("TaskFlow Password Reset OTP")
+        print("Email:", user.email)
+        print("OTP:", otp)
+        print("================================")
+
+        return redirect("verify_otp")
+
+    return render(
+        request,
+        "forgot_password.html"
+    )
+
+
+def verify_otp(request):
+
+    if request.method == "POST":
+
+        entered_otp = request.POST.get("otp")
+
+        saved_otp = request.session.get("reset_otp")
+
+        if entered_otp == saved_otp:
+
+            request.session["otp_verified"] = True
+
+            return redirect("reset_password")
+
+        else:
+
+            messages.error(
+                request,
+                "Invalid OTP. Please try again."
+            )
+
+    return render(
+        request,
+        "verify_otp.html"
+    )
+
+def reset_password(request):
+
+    # Check whether OTP was verified
+    if not request.session.get("otp_verified"):
+
+        return redirect("forgot_password")
+
+    user_id = request.session.get("reset_user_id")
+
+    try:
+
+        user = User.objects.get(id=user_id)
+
+    except User.DoesNotExist:
+
+        messages.error(
+            request,
+            "User not found."
+        )
+
+        return redirect("forgot_password")
+
+    if request.method == "POST":
+
+        new_password = request.POST.get("new_password")
+        confirm_password = request.POST.get("confirm_password")
+
+        if new_password != confirm_password:
+
+            messages.error(
+                request,
+                "Passwords do not match."
+            )
+
+            return render(
+                request,
+                "reset_password.html"
+            )
+
+        if len(new_password) < 8:
+
+            messages.error(
+                request,
+                "Password must contain at least 8 characters."
+            )
+
+            return render(
+                request,
+                "reset_password.html"
+            )
+
+        user.set_password(new_password)
+        user.save()
+
+        # Clear password reset session data
+        request.session.pop("reset_user_id", None)
+        request.session.pop("reset_otp", None)
+        request.session.pop("otp_verified", None)
+
+        messages.success(
+            request,
+            "Password changed successfully. Please login."
+        )
+
+        return redirect("login")
+
+    return render(
+        request,
+        "reset_password.html"
+    )
