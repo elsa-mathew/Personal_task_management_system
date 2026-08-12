@@ -1,0 +1,484 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+<body>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="message-box {{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="navbar">
+        <div class="logo">TaskFlow</div>
+        
+    </div>
+
+    <div class="menu-container">
+
+        <div class="menu-items">
+            <i class="fa-solid fa-house"></i>
+            <a href="{% url 'dashboard' %}">Dashboard</a>
+        </div>
+        <div class="menu-items">
+            <i class="fa-solid fa-pen-to-square"></i>
+            <a href="{% url 'create_task' %}">Create</a>
+        </div>
+        <div class="menu-items">
+            <i class="fa-solid fa-list-check"></i>
+            <a href="{% url 'my_tasks' %}">MyTasks</a>
+        </div>
+        <div class="menu-items">
+            <i class="fa-regular fa-circle-user"></i>
+            <a href="{% url 'profile' %}">Profile</a>
+        </div>
+        <div class="menu-items">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <a href="{% url 'logout' %}">Logout</a>
+        </div>
+            
+      
+    </div>
+    <div class="main-container">
+        
+        <div class="display-cards">
+        <div class="card">
+            <h2>Total Tasks</h2>
+            <p>{{ total_tasks }}</p>
+        </div>
+        <div class="card">
+            <h2>Completed Tasks</h2>
+            <p>{{ completed_tasks_count }}</p>
+        </div>
+        <div class="card">
+            <h2>Pending Tasks</h2>
+            <p>{{ pending_tasks_count }}</p>
+        </div>
+        <div class="card">
+            <h2>Overdue Tasks</h2>
+            <p>{{ overdue_tasks_count }}</p>
+        </div>
+        <div class="card">
+            <h2>Upcoming Tasks</h2>
+            <p>{{ upcoming_tasks_count }}</p>
+        </div>
+    </div>
+
+    <div class="details-card">
+
+    <div class="dashboard-header">
+
+        <h2>Dashboard Overview</h2>
+
+        <div class="dashboard-actions">
+
+            <form method="GET" class="dashboard-actions">
+
+    <input
+        type="text"
+        name="search"
+        placeholder="Search Task..."
+        class="dashboard-search"
+        value="{{ request.GET.search }}">
+
+    <select name="status" class="dashboard-filter">
+
+        <option value="">All Status</option>
+
+        <option value="Pending"
+            {% if request.GET.status == "Pending" %}selected{% endif %}>
+            Pending
+        </option>
+
+        <option value="In Progress"
+            {% if request.GET.status == "In Progress" %}selected{% endif %}>
+            In Progress
+        </option>
+
+        <option value="Completed"
+            {% if request.GET.status == "Completed" %}selected{% endif %}>
+            Completed
+        </option>
+
+        <option value="Cancelled"
+            {% if request.GET.status == "Cancelled" %}selected{% endif %}>
+            Cancelled
+        </option>
+
+    </select>
+
+    <select name="priority" class="dashboard-filter">
+
+        <option value="">All Priority</option>
+
+        <option value="High"
+            {% if request.GET.priority == "High" %}selected{% endif %}>
+            High
+        </option>
+
+        <option value="Medium"
+            {% if request.GET.priority == "Medium" %}selected{% endif %}>
+            Medium
+        </option>
+
+        <option value="Low"
+            {% if request.GET.priority == "Low" %}selected{% endif %}>
+            Low
+        </option>
+
+    </select>
+
+    <select name="sort" class="dashboard-filter">
+
+        <option value="">Sort By</option>
+
+        <option value="newest"
+            {% if request.GET.sort == "newest" %}selected{% endif %}>
+            Newest
+        </option>
+
+        <option value="oldest"
+            {% if request.GET.sort == "oldest" %}selected{% endif %}>
+            Oldest
+        </option>
+
+        <option value="due_date"
+            {% if request.GET.sort == "due_date" %}selected{% endif %}>
+            Due Date
+        </option>
+
+        <option value="priority"
+            {% if request.GET.sort == "priority" %}selected{% endif %}>
+            Priority
+        </option>
+
+    </select>
+
+    <button type="submit" class="apply-btn">
+
+        <i class="fa-solid fa-filter"></i>
+
+        Apply
+
+    </button>
+
+    <a href="{% url 'dashboard' %}" class="clear-filter">
+
+        Clear
+
+    </a>
+
+</form>
+            
+
+           <button id="openCreateModal" class="create-btn">
+    <i class="fa-solid fa-plus"></i> Create Task
+</button>
+
+        </div>
+
+    </div>
+
+    <div class="task-card">
+
+    <h3 class="task-title-1">
+
+        ✓ Completed
+
+    </h3>
+
+    <table class="task-table">
+
+        <thead>
+
+        <tr>
+
+            <th>Task</th>
+
+            <th>Due Date</th>
+
+            <th>Priority</th>
+
+        </tr>
+
+        </thead>
+
+        <tbody>
+
+        {% for task in completed_tasks %}
+
+        <tr>
+
+            <td>
+
+                <a href="{% url 'view_task' task.id %}"
+                   class="task-link">
+
+                    {{ task.title }}
+
+                </a>
+
+            </td>
+
+            <td>
+
+                {{ task.due_date }}
+
+            </td>
+
+            <td>
+
+                <span class="priority-badge {{ task.priority|lower }}">
+
+                    {{ task.priority }}
+
+                </span>
+
+            </td>
+
+        </tr>
+
+        {% empty %}
+
+        <tr>
+
+            <td colspan="3">
+
+                No Completed Tasks
+
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+
+<div class="task-card">
+
+    <h3 class="task-title-3">
+
+        📋 Backlogs
+
+    </h3>
+
+    <table class="task-table">
+
+        <thead>
+
+        <tr>
+
+            <th>Task</th>
+
+            <th>Due Date</th>
+
+            <th>Priority</th>
+
+        </tr>
+
+        </thead>
+
+        <tbody>
+
+        {% for task in backlog_tasks %}
+
+        <tr>
+
+            <td>
+
+                <a href="{% url 'view_task' task.id %}"
+                   class="task-link">
+
+                    {{ task.title }}
+
+                </a>
+
+            </td>
+
+            <td>
+
+                {{ task.due_date }}
+
+            </td>
+
+            <td>
+
+                <span class="priority-badge {{ task.priority|lower }}">
+
+                    {{ task.priority }}
+
+                </span>
+
+            </td>
+
+        </tr>
+
+        {% empty %}
+
+        <tr>
+
+            <td colspan="3">
+
+                No Backlogs
+
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+</div>
+
+
+    </div>
+
+
+<div id="createTaskModal" class="modal">
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <h2>Create New Task</h2>
+
+            <span id="closeCreateModal" class="close-btn">&times;</span>
+
+        </div>
+
+        <form method="POST"
+              action="{% url 'create_task' %}"
+              enctype="multipart/form-data">
+
+            {% csrf_token %}
+
+            <div class="form-group">
+
+                <label>Task Title</label>
+
+                <input
+                    type="text"
+                    name="title"
+                    required>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Description</label>
+
+                <textarea
+                    name="description"
+                    rows="4"
+                    required></textarea>
+
+            </div>
+
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label>Priority</label>
+
+                    <select name="priority">
+
+                        <option value="High">High</option>
+
+                        <option value="Medium" selected>Medium</option>
+
+                        <option value="Low">Low</option>
+
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Status</label>
+
+                    <select name="status">
+
+                        <option value="Pending">Pending</option>
+
+                        <option value="In Progress">In Progress</option>
+
+                        <option value="Completed">Completed</option>
+
+                        <option value="Cancelled">Cancelled</option>
+
+                        <option value="On Hold">On Hold</option>
+
+                        <option value="Not Started">Not Started</option>
+
+                        <option value="In Review">In Review</option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label>Due Date</label>
+
+                    <input
+                        type="date"
+                        name="due_date"
+                        required>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Attachment</label>
+
+                    <input
+                        type="file"
+                        name="file">
+
+                </div>
+
+            </div>
+
+            <div class="modal-buttons">
+
+                <button
+                    type="submit"
+                    class="save-btn">
+
+                    Create Task
+
+                </button>
+
+                
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+<script src="{% static 'js/dashboard.js' %}"></script>   
+</body>
+</html>
