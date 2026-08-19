@@ -8,7 +8,6 @@ body {
 
 }
 
-/* ================= Messages ================= */
 
 .message-box{
 
@@ -37,8 +36,6 @@ body {
     border:1px solid #fecaca;
 
 }
-
-/* ================= Navbar ================= */
 
 .navbar {
 
@@ -88,7 +85,6 @@ body {
 
 }
 
-/* ================= Sidebar ================= */
 
 .menu-container{
 
@@ -105,38 +101,7 @@ body {
 
 }
 
-.menu-items{
 
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    margin:22px 0 45px;
-    cursor:pointer;
-
-}
-
-.menu-items i{
-
-    font-size:20px;
-
-}
-
-.menu-items a{
-
-    text-decoration:none;
-    color:#fff;
-    font-size:10px;
-    margin-top:10px;
-
-}
-
-.menu-items:hover{
-
-    transform:scale(1.08);
-
-}
-
-/* ================= Dashboard Container ================= */
 
 .main-container{
 
@@ -146,7 +111,6 @@ body {
 
 }
 
-/* ================= Statistics Cards ================= */
 
 .display-cards{
 
@@ -192,7 +156,6 @@ body {
 
 }
 
-/* ================= Dashboard Card ================= */
 
 .details-card{
 
@@ -206,7 +169,6 @@ body {
 
 }
 
-/* ================= Header ================= */
 
 .dashboard-header{
 
@@ -236,7 +198,6 @@ body {
 
 }
 
-/* ================= Search ================= */
 
 .dashboard-search{
 
@@ -258,7 +219,6 @@ body {
 
 }
 
-/* ================= Filters ================= */
 
 .dashboard-filter{
 
@@ -274,7 +234,6 @@ body {
 
 }
 
-/* ================= Create Button ================= */
 
 .create-btn{
 
@@ -300,7 +259,6 @@ body {
 
 }
 
-/* ================= Task Cards ================= */
 
 .task-card{
 
@@ -315,8 +273,6 @@ body {
     box-shadow:0 2px 6px rgba(0,0,0,.08);
 
 }
-
-/* ================= Headings ================= */
 
 .task-title-1,
 .task-title-2,
@@ -356,7 +312,6 @@ body {
 
 }
 
-/* ================= Table ================= */
 
 .task-table{
 
@@ -392,7 +347,6 @@ body {
 
 }
 
-/* ================= Task Link ================= */
 
 .task-link{
 
@@ -412,7 +366,6 @@ body {
 
 }
 
-/* ================= Priority ================= */
 
 .priority-badge{
 
@@ -448,8 +401,6 @@ body {
 
 }
 
-/* ================= Empty Table ================= */
-
 .task-table td[colspan]{
 
     text-align:center;
@@ -459,8 +410,6 @@ body {
     padding:20px;
 
 }
-
-/* ================= Responsive ================= */
 
 @media(max-width:1000px){
 
@@ -522,7 +471,6 @@ body {
 
 }
 
-/* ================= Create Task Modal ================= */
 
 .modal{
 
@@ -748,4 +696,100 @@ body {
 
     font-size: 13px;
 
+}
+/* ================= Professional Sidebar Items ================= */
+
+.menu-items {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    margin: 22px 0 45px;
+
+    cursor: pointer;
+
+    text-decoration: none;
+
+    color: #ffffff;
+
+    transition: all 0.25s ease;
+
+    position: relative;
+}
+
+/* Icon */
+
+.menu-items i {
+    font-size: 20px;
+
+    color: #d9d7ff;
+
+    transition: all 0.25s ease;
+}
+
+/* Text */
+
+.menu-items span {
+    color: #ffffff;
+
+    font-size: 10px;
+    font-weight: 500;
+
+    margin-top: 9px;
+
+    white-space: nowrap;
+
+    transition: all 0.25s ease;
+}
+
+/* Hover */
+
+.menu-items:hover {
+    transform: translateY(-2px);
+}
+
+/* Icon hover */
+
+.menu-items:hover i {
+    color: #ffffff;
+
+    transform: scale(1.12);
+
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.4));
+}
+
+/* Text hover */
+
+.menu-items:hover span {
+    color: #ffffff;
+
+    font-weight: 600;
+}
+
+/* Small active indicator */
+
+.menu-items::before {
+    content: "";
+
+    position: absolute;
+
+    left: -20px;
+
+    top: 50%;
+
+    width: 3px;
+    height: 0;
+
+    background: #ffffff;
+
+    border-radius: 0 4px 4px 0;
+
+    transform: translateY(-50%);
+
+    transition: height 0.25s ease;
+}
+
+.menu-items:hover::before {
+    height: 25px;
 }

@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404
-
+from datetime import date
 
 def task_detail(request, task_id):
     
@@ -52,6 +52,12 @@ def my_tasks(request):
     tasks = Task.objects.filter(
     user=request.user
 ).order_by("-created_at")
+
+    for task in tasks:
+        if task.due_date < date.today() and task.status != 'Completed':
+            task.is_overdue = True
+        else:
+            task.is_overdue = False
 
     search = request.GET.get("search")
 
@@ -100,6 +106,12 @@ def my_tasks(request):
     page_number = request.GET.get("page")
 
     page_obj = paginator.get_page(page_number)
+
+    for task in page_obj:
+        if task.due_date < date.today() and task.status != 'Completed':
+            task.is_overdue = True
+        else:
+            task.is_overdue = False
 
     context = {
 

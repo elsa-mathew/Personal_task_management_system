@@ -26,30 +26,28 @@
         
     </div>
 
-    <div class="menu-container">
+<div class="menu-container">
 
-        <div class="menu-items">
+        <a href="{% url 'dashboard' %}" class="menu-items">
             <i class="fa-solid fa-house"></i>
-            <a href="{% url 'dashboard' %}">Dashboard</a>
-        </div>
-        <div class="menu-items">
+            <span>Dashboard</span>
+        </a>
+        <a href="{% url 'create_task' %}" class="menu-items">
             <i class="fa-solid fa-pen-to-square"></i>
-            <a href="{% url 'create_task' %}">Create</a>
-        </div>
-        <div class="menu-items">
+            <span>Create Task</span>
+        </a>
+        <a href="{% url 'my_tasks' %}" class="menu-items">
             <i class="fa-solid fa-list-check"></i>
-            <a href="{% url 'my_tasks' %}">MyTasks</a>
-        </div>
-        <div class="menu-items">
+            <span>My Tasks</span>
+        </a>
+        <a href="{% url 'profile' %}" class="menu-items">
             <i class="fa-regular fa-circle-user"></i>
-            <a href="{% url 'profile' %}">Profile</a>
-        </div>
-        <div class="menu-items">
+            <span>Profile</span>
+        </a>
+        <a href="{% url 'logout' %}" class="menu-items">
             <i class="fa-solid fa-right-from-bracket"></i>
-            <a href="{% url 'logout' %}">Logout</a>
-        </div>
-            
-      
+            <span>Logout</span>
+        </a>
     </div>
 
 <div class="profile-container">

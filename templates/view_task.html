@@ -27,30 +27,28 @@
         
     </div>
 
-    <div class="menu-container">
+<div class="menu-container">
 
-        <div class="menu-items">
+        <a href="{% url 'dashboard' %}" class="menu-items">
             <i class="fa-solid fa-house"></i>
-            <a href="{% url 'dashboard' %}">Dashboard</a>
-        </div>
-        <div class="menu-items">
+            <span>Dashboard</span>
+        </a>
+        <a href="{% url 'create_task' %}" class="menu-items">
             <i class="fa-solid fa-pen-to-square"></i>
-            <a href="{% url 'create_task' %}">Create</a>
-        </div>
-        <div class="menu-items">
+            <span>Create Task</span>
+        </a>
+        <a href="{% url 'my_tasks' %}" class="menu-items">
             <i class="fa-solid fa-list-check"></i>
-            <a href="{% url 'my_tasks' %}">MyTasks</a>
-        </div>
-        <div class="menu-items">
+            <span>My Tasks</span>
+        </a>
+        <a href="{% url 'profile' %}" class="menu-items">
             <i class="fa-regular fa-circle-user"></i>
-            <a href="{% url 'profile' %}">Profile</a>
-        </div>
-        <div class="menu-items">
+            <span>Profile</span>
+        </a>
+        <a href="{% url 'logout' %}" class="menu-items">
             <i class="fa-solid fa-right-from-bracket"></i>
-            <a href="{% url 'logout' %}">Logout</a>
-        </div>
-            
-      
+            <span>Logout</span>
+        </a>
     </div>
 
     <div class="view-task-container">
@@ -96,18 +94,41 @@
                 </div>
 
             </div>
-
             <div class="detail">
-                <label>Attachment</label>
+    <label>Attachment</label>
 
-                <a href="{{ task.file.url }}" download>
-                    📄 {{ task.file.name }}
-                </a>
+    {% if task.file %}
 
-            </div>
+        <div class="attachment-grid">
+
+            <a href="{{ task.file.url }}"
+               target="_blank"
+               class="attachment-card">
+
+                <div class="file-preview">
+
+                    <i class="fa-solid fa-file-pdf pdf-icon"></i>
+
+                </div>
+
+                <div class="file-info">
+
+                    <span class="file-name">
+                        {{ task.file.name|cut:"task_files/" }}
+                    </span>
+
+                </div>
+
+            </a>
 
         </div>
 
+    {% else %}
+
+        <p class="no-file">No attachment</p>
+
+    {% endif %}
+</div>
         <div class="button-group">
 
             <button
@@ -265,7 +286,6 @@
 
             </div>
 
-            <!-- Attachment -->
 
             <div class="form-group">
 
